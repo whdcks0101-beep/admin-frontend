@@ -1,0 +1,19 @@
+name: admin-frontend
+
+services:
+  frontend:
+    image: admin-frontend:local
+    build:
+      context: .
+      args:
+        VITE_BACKEND_ORIGIN: http://localhost:8080
+    container_name: admin-frontend
+    ports:
+      - "127.0.0.1:5173:8080"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped

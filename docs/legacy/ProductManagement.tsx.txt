@@ -1,0 +1,155 @@
+// 학습용 백업: 실제 화면은 src/pages/inventory/InventoryManagement.tsx로 통합했습니다.
+import { useState } from "react";
+import Modal from "../../common/components/Modal";
+
+// 1. 상품 데이터 타입 정의
+interface Product {
+    id : number;
+    name : string;
+    price : number;
+    stock : number;
+    category : string;
+}
+
+export default function ProductManagement() {    
+    // 2. 가짜(Mock) 상품 데이터 상태 생성
+  const [products, setProducts] = useState<Product[]>([
+    { id: 1, name: '무선 마우스', price: 25000, stock: 15, category: '전자기기' },
+    { id: 2, name: '기계식 키보드', price: 120000, stock: 5, category: '전자기기' },
+    { id: 3, name: '사무용 텀블러', price: 15000, stock: 50, category: '생활용품' },
+    { id: 4, name: '노트북 거치대', price: 35000, stock: 0, category: '사무용품' },
+  ]);
+
+  //모달창과 새로운 상품 입력을 위한 상태들 추가
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); //팝업오픈여부
+  const [newName, setNewName] = useState<string>('');
+  const [newPrice, setNewPrice] = useState<number | ''>('');
+  const [newStock, setNewStock] = useState<number | ''>('');
+  const [newCategory, setNewCategory] = useState<string>('전자기기');
+
+  //다중 필터링 을 위한 상태 추가
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('전체');
+
+  const handelAddProduct = () =>{
+    const newProduct : Product = {
+        id : products.length > 0 ? Math.max(...products.map(u => u.id))+1 : 1
+      , name : newName
+      , price : Number(newPrice)
+      , stock : Number(newStock)
+      , category : newCategory          
+    }
+
+    setProducts([...products, newProduct]);
+    setNewName('');
+    setNewPrice(0);
+    setNewStock(0);
+    setNewCategory('전자기기');
+    setIsModalOpen(false);
+  }
+
+const filteredProducts = products.filter((product) =>{
+    // 조건 1: 카테고리가 '전체'이거나, 상품의 카테고리가 선택된 카테고리와 일치할 것
+    const matchCategory = selectedCategory === '전체' || product.category === selectedCategory;
+
+    const matchSearch = product.name.includes(searchTerm);
+
+    return matchCategory &&  matchSearch;
+})
+
+
+return (
+    <div>
+      <h2>📦 상품 관리</h2>
+
+        {/* ★ 4. 상품 추가 모달을 여는 버튼 */}
+      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+{/* 필터링 UI 구역 */}
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <select 
+            value={selectedCategory} 
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            style={{ padding: '8px' }}
+          >
+            <option value="전체">전체 카테고리</option>
+            <option value="전자기기">전자기기</option>
+            <option value="생활용품">생활용품</option>
+            <option value="사무용품">사무용품</option>
+          </select>
+          
+          <input 
+            type="text" 
+            placeholder="상품명 검색..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ padding: '8px', width: '200px' }}
+          />
+        </div>
+
+         <button 
+          onClick={()=> setIsModalOpen(true)}
+          style={{ padding: '8px 16px', background: '#3498db', color: 'white', border: 'none', cursor: 'pointer' }}
+          >
+          + 새 상품 추가
+        </button>
+      </div>
+
+      {/* 3. 데이터 그리드 (테이블) 영역 */}
+      <table border={1} style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', marginTop: '20px' }}>
+        <thead style={{ background: '#f8f9fa' }}>
+          <tr>
+            <th>ID</th>
+            <th>상품명</th>
+            <th>가격</th>
+            <th>재고</th>
+            <th>카테고리</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* 4. map() 함수를 이용해 배열 데이터를 화면(HTML)으로 변환 */}
+          {filteredProducts.map((product) =>(
+            <tr key={product.id}>
+                <td>{product.id}</td>
+                <td>{product.name}</td>                
+                <td>{product.price.toLocaleString()}원</td>
+                <td>{product.stock === 0 ? (<span style={{ color: 'red', fontWeight: 'bold' }}>품절</span>) : (`${product.stock}개`)}</td>
+                <td>{product.category}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+
+        {/* ★ 5. 공통 Modal 컴포넌트 재사용하기! */}
+
+        <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
+          <h3>새 상품 등록</h3>
+            <div style={{ marginBottom: '10px' }}>
+            <input type="text" placeholder="상품명" value={newName} onChange={e => setNewName(e.target.value)} style={{ width: '100%', padding: '8px' }} />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+            <input type="number" placeholder="가격 (원)" value={newPrice} onChange={e => setNewPrice(e.target.value === '' ? '' : Number(e.target.value))} style={{ width: '100%', padding: '8px' }} />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+            <input type="number" placeholder="초기 재고 (개)" value={newStock} onChange={e => setNewStock(e.target.value === '' ? '' : Number(e.target.value))} style={{ width: '100%', padding: '8px' }} />
+            </div>
+            <div style={{ marginBottom: '20px' }}>
+            <select value={newCategory} onChange={e => setNewCategory(e.target.value)} style={{ width: '100%', padding: '8px' }}>
+                <option value="전자기기">전자기기</option>
+                <option value="생활용품">생활용품</option>
+                <option value="사무용품">사무용품</option>
+            </select>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                <button onClick={() => setIsModalOpen(false)} style={{ padding: '8px 16px' }}>취소</button>
+                <button onClick={handelAddProduct} style={{ padding: '8px 16px', background: '#2ecc71', color: 'white', border: 'none' }}>등록</button>
+            </div>
+        </Modal>
+
+
+    </div>
+  );
+
+
+}
