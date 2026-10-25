@@ -5,6 +5,9 @@
 !index.html
 !vite.config.ts
 !tsconfig*.json
+!.oxlintrc.json
+!tests/
+!tests/**
 !src/
 !src/**
 !public/

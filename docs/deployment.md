@@ -2,6 +2,8 @@
 
 Node에서 React를 빌드한 뒤 `dist` 파일만 Nginx 이미지로 복사합니다. 실행 컨테이너에는 Vite 개발 서버가 필요하지 않습니다.
 
+Dockerfile의 `verify` 단계에서 린트와 테스트를 통과해야 `build` 단계에서 React를 빌드합니다. `Jenkinsfile`도 같은 단계를 사용합니다. 현재 Jenkins 작업은 수동 시작으로 GitHub 소스 조회 → 린트·테스트 → `admin-frontend:ci-빌드번호` 이미지 생성까지 실행하며, 실행 중인 화면 컨테이너를 교체하는 배포 단계는 아직 포함하지 않습니다.
+
 ```text
 브라우저 → localhost:5173 → Nginx → React 정적 파일
 브라우저의 React → localhost:8080 → Kubernetes 백엔드
