@@ -2,7 +2,7 @@ name: admin-frontend
 
 services:
   frontend:
-    image: admin-frontend:local
+    image: ${FRONTEND_IMAGE:-admin-frontend:local}
     build:
       context: .
       args:

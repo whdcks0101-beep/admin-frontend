@@ -32,5 +32,19 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    export FRONTEND_IMAGE="admin-frontend:ci-${BUILD_NUMBER}"
+                    docker image inspect "$FRONTEND_IMAGE" > /dev/null
+                    docker compose -f compose.yaml config --quiet
+                    docker compose -f compose.yaml up -d \
+                        --no-build --pull never \
+                        --wait --wait-timeout 60 frontend
+                    docker compose -f compose.yaml ps frontend
+                '''
+            }
+        }
     }
 }
