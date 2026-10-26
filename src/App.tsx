@@ -16,6 +16,7 @@ import OrderStatistics from './pages/order/OrderStatistics';
 function AdminLayout() {
   const user = useAuthStore((state) => state.user);
   const isAdmin = user?.authorities.includes('ROLE_ADMIN') ?? false;
+  const isDemoAdmin = user?.authorities.includes('ROLE_DEMO_ADMIN') ?? false;
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const links = [
@@ -60,7 +61,7 @@ function AdminLayout() {
         <div className="account-area">
           {user ? <>
             <span className="account-avatar" aria-hidden="true">{user.username.slice(0, 1).toUpperCase()}</span>
-            <div className="account-info"><strong>{user.username}</strong><small>{isAdmin ? '관리자' : '사용자'}</small></div>
+            <div className="account-info"><strong>{user.username}</strong><small>{isAdmin ? '관리자' : isDemoAdmin ? '체험 관리자' : '사용자'}</small></div>
             <a className="btn btn-light btn-sm" href={AUTH_URLS.logout}>로그아웃</a>
           </> : <>
             <span className="text-secondary login-hint">로그인 후 이용해 주세요</span>
@@ -69,7 +70,7 @@ function AdminLayout() {
           </>}
         </div>
       </header>
-      <main id="main-content" className="page-content"><Outlet /></main>
+      <main id="main-content" className="page-content">{isDemoAdmin && <div className="alert alert-info">체험 관리자 계정입니다. 상품·재고·주문 기능을 체험할 수 있으며 회원 조회·수정·삭제와 권한 변경은 제한됩니다. 공용 샘플 데이터이므로 다른 방문자의 변경이 반영될 수 있습니다.</div>}<Outlet /></main>
       <footer className="app-footer"><span>ADMIN WORKSPACE</span><span>상품 · 재고 · 주문 관리</span></footer>
     </div>
   </div>;

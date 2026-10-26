@@ -4,7 +4,7 @@ Spring Boot 주문·재고 시스템을 사용하는 React + TypeScript 관리 �
 
 **[실행 서비스](https://13-124-81-142.sslip.io) · [백엔드 및 전체 포트폴리오](https://github.com/whdcks0101-beep/admin-api) · [PDF](https://github.com/whdcks0101-beep/admin-api/blob/main/output/pdf/admin-portfolio.pdf)**
 
-로그인 계정은 사전 등록 방식이며 관리자 비밀번호는 공개하지 않습니다.
+공개 체험 계정은 [체험 안내](https://github.com/whdcks0101-beep/admin-api/blob/main/docs/portfolio/demo-access.md)를 참고하세요. 체험 관리자는 상품·재고를 변경할 수 있지만 회원 관리·권한 변경은 제한됩니다. 운영 관리자 계정은 공개하지 않습니다.
 
 ## 화면과 주요 동작
 

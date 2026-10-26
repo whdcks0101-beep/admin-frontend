@@ -60,7 +60,7 @@ export default function UserTable({
                   <select disabled={disabled} value={editRole} onChange={(e) => setEditRole(e.target.value)} className="form-select" aria-label="회원 구분">
                     <option value="일반회원">일반회원</option>
                     <option value="우수회원">우수회원</option>
-                    <option value="관리자">관리자</option>
+                    <option value="관리자">관리자</option><option value="체험관리자">체험관리자</option>
                   </select>
                 </td>
                 <td><div className="cell-actions">

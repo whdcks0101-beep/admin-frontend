@@ -13,7 +13,7 @@ import type { InventoryResponse } from '../../types/inventory';
 
 export default function InventoryManagement() {
   const user = useAuthStore((state) => state.user);
-  const isAdmin = user?.authorities.includes('ROLE_ADMIN') ?? false;
+  const isAdmin = user?.authorities.some((authority) => authority === 'ROLE_ADMIN' || authority === 'ROLE_DEMO_ADMIN') ?? false;
   const [editingProductId, setEditingProductId] = useState<number | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);

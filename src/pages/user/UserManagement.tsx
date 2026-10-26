@@ -134,7 +134,7 @@ export default function UserManagement() {
               value={newPassword} onChange={event => setNewPassword(event.target.value)} />
               <small className="field-hint">UTF-8 기준 최대 72바이트까지 입력할 수 있습니다.</small></label>
             <label className="field"><span>회원 구분</span><select className="form-select" value={newRole} onChange={event => setNewRole(event.target.value)}>
-              <option value="일반회원">일반회원</option><option value="우수회원">우수회원</option><option value="관리자">관리자</option>
+              <option value="일반회원">일반회원</option><option value="우수회원">우수회원</option><option value="관리자">관리자</option><option value="체험관리자">체험관리자</option>
             </select></label>
           </fieldset>
           <div className="form-actions">
