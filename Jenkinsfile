@@ -27,23 +27,23 @@ pipeline {
             steps {
                 sh '''
                     docker build --progress=plain \
-                        --build-arg VITE_BACKEND_ORIGIN=http://localhost:8080 \
-                        -t "admin-frontend:ci-${BUILD_NUMBER}" .
+                        --build-arg VITE_BACKEND_ORIGIN= \
+                        -t "admin-frontend:aws-${BUILD_NUMBER}-$(git rev-parse --short=12 HEAD)" .
                 '''
             }
         }
 
         stage('Deploy') {
             steps {
-                sh '''
-                    export FRONTEND_IMAGE="admin-frontend:ci-${BUILD_NUMBER}"
-                    docker image inspect "$FRONTEND_IMAGE" > /dev/null
-                    docker compose -f compose.yaml config --quiet
-                    docker compose -f compose.yaml up -d \
-                        --no-build --pull never \
-                        --wait --wait-timeout 60 frontend
-                    docker compose -f compose.yaml ps frontend
-                '''
+                withCredentials([
+                    file(credentialsId: 'lightsail-ssh-key', variable: 'LIGHTSAIL_SSH_KEY')
+                ]) {
+                    sh '''
+                        set +x
+                        IMAGE="admin-frontend:aws-${BUILD_NUMBER}-$(git rev-parse --short=12 HEAD)"
+                        bash deploy/lightsail/jenkins-deploy.sh frontend "$IMAGE"
+                    '''
+                }
             }
         }
     }
