@@ -12,7 +12,9 @@ Spring Boot 주문·재고 시스템을 사용하는 React + TypeScript 관리 �
 - 주문: 생성, 조건 검색·페이징, 상세 조회, 목록 검색 조건 유지
 - 통계: 기간별 주문 건수 조회
 - 인증: 이메일 로그인, Keycloak SSO, 로그인 만료·권한 오류 안내
-- 공통: API 모듈 분리, CSRF 처리, 요청 중 중복 동작 방지
+- 공통: API 모듈 분리, 다른 사이트에서 보내는 위조 변경 요청 방어(CSRF), 처리 중 버튼 중복 클릭 방지
+
+[처음 보는 기술 용어 쉽게 읽기](https://github.com/whdcks0101-beep/admin-api/blob/main/docs/portfolio/terms.md)
 
 ## 실행
 
@@ -33,7 +35,7 @@ PowerShell 실행 정책 때문에 npm 명령이 차단되면 `npm.cmd`를 사�
 
 ## 배포
 
-Jenkins에서 수동 빌드를 시작하면 검증 후 Docker 이미지를 생성하고 SSH로 AWS Lightsail에 배포합니다. 클라우드 이미지는 `VITE_BACKEND_ORIGIN`을 빈 문자열로 빌드해 화면과 API가 같은 HTTPS 출처를 사용합니다. Caddy가 API·SSO 요청을 분기하고 Nginx는 React 정적 파일을 제공합니다.
+Jenkins에서 수동 빌드를 시작하면 검증 후 Docker 이미지를 생성하고 SSH로 AWS Lightsail에 배포합니다. 클라우드 이미지는 `VITE_BACKEND_ORIGIN`을 빈 문자열로 빌드해 화면과 API가 프로토콜·호스트·포트가 같은 HTTPS 주소를 사용합니다. Caddy가 API·SSO 요청을 분기하고 Nginx는 React 정적 파일을 제공합니다.
 
 - [Docker 실행 및 Jenkins 배포](docs/deployment.md)
 - [화면 공통 구성](docs/UI-GUIDE.md)

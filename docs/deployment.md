@@ -4,7 +4,7 @@
 
 기본 `Jenkinsfile`은 AWS 배포용이다. **지금 빌드**를 누르면 린트·테스트 후 `VITE_BACKEND_ORIGIN`을 빈 문자열로 빌드하여 공개 HTTPS 주소와 같은 출처로 API를 호출한다. 이미지 태그는 `admin-frontend:aws-빌드번호-Git커밋12자리`다.
 
-Jenkins Global credentials에 `lightsail-ssh-key`라는 Secret file로 Lightsail 개인키를 등록한다. 기존 GitHub 자격 증명과 작업 Script Path는 유지한다. `deploy/lightsail/jenkins-deploy.sh`가 검증된 서버 공개키로 SSH 접속하고 이미지를 전송한다. 서버에 미리 설치한 `/home/ubuntu/admin-portfolio/apply-image.sh`가 frontend만 교체하고 healthcheck를 확인한다. 성공 시에만 서버 `.env`의 FRONTEND_IMAGE를 갱신한다. 실패 시 자동 롤백은 하지 않는다.
+Jenkins Global credentials에 `lightsail-ssh-key`라는 Secret file로 Lightsail 개인키를 등록한다. 기존 GitHub 자격 증명과 작업 Script Path는 유지한다. `deploy/lightsail/jenkins-deploy.sh`가 검증된 서버 공개키로 SSH 접속하고 이미지를 전송한다. 서버에 미리 설치한 `/home/ubuntu/admin-portfolio/apply-image.sh`가 frontend만 교체하고 컨테이너 상태 점검(healthcheck)을 확인한다. 성공 시에만 서버 `.env`의 FRONTEND_IMAGE를 갱신한다. 실패 시 자동 롤백은 하지 않는다.
 
 공개 주소: https://13-124-81-142.sslip.io
 
@@ -12,7 +12,7 @@ Jenkins Global credentials에 `lightsail-ssh-key`라는 Secret file로 Lightsail
 
 Node에서 React를 빌드한 뒤 `dist` 파일만 Nginx 이미지로 복사합니다. 실행 컨테이너에는 Vite 개발 서버가 필요하지 않습니다.
 
-Dockerfile의 `verify` 단계에서 린트와 테스트를 통과해야 `build` 단계에서 React를 빌드합니다. `Jenkinsfile`도 같은 단계를 사용합니다. Jenkins 작업은 수동 시작으로 GitHub 소스 조회 → 린트·테스트 → `admin-frontend:ci-빌드번호` 이미지 생성 → Compose 배포 순서로 실행합니다.
+Dockerfile의 `verify` 단계에서 린트와 테스트를 통과해야 `build` 단계에서 React를 빌드합니다. 로컬 배포용 `Jenkinsfile.local`도 같은 단계를 사용합니다. 이 로컬 Jenkins 작업은 수동 시작으로 GitHub 소스 조회 → 린트·테스트 → `admin-frontend:ci-빌드번호` 이미지 생성 → Compose 배포 순서로 실행합니다.
 
 배포 단계는 `FRONTEND_IMAGE`로 이번 빌드의 이미지를 지정하고 `--no-build --pull never`로 이미 생성한 로컬 이미지를 사용합니다. Compose 프로젝트 이름 `admin-frontend`를 유지해서 기존 화면 컨테이너를 교체하며, `--wait --wait-timeout 60`으로 상태 점검 성공을 기다립니다. 단일 컨테이너 교체 중에는 잠시 연결이 끊길 수 있습니다. 실패 시 자동 롤백은 수행하지 않습니다.
 
